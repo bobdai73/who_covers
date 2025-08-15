@@ -1,0 +1,7 @@
+setup.py
+src/who_covers/__init__.py
+src/who_covers.egg-info/PKG-INFO
+src/who_covers.egg-info/SOURCES.txt
+src/who_covers.egg-info/dependency_links.txt
+src/who_covers.egg-info/requires.txt
+src/who_covers.egg-info/top_level.txt

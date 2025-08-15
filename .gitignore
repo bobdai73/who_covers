@@ -1,0 +1,29 @@
+
+# Bytecode & build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.log
+
+
+# Data folders (preserve structure, not files)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+venv_who_covers/
+
+# VS Code settings
+.vscode/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS-specific garbage
+.DS_Store
+Thumbs.db
+
+# Tarballs, zips, backups
+*.tar.gz
+*.zip
+*.bak
