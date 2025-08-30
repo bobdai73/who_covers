@@ -70,9 +70,9 @@ def main():
     save_parquet(df, out_parq)
 
     if args.csv.gz:
-        out_csv_gz = processed_path(f"games_wide_{args.year}_{args.season}
+        out_csv_gz = processed_path(f"games_wide_{args.year}_{args.season}")
         df.to_csv(out_csv_gz, index =False, compression="gzip")
-        print(f"Saved Dataset -> {out_parq\nSaved CSV.GZ -> {out_csv_gz}\nRows: {len(df)}, Cols: {df.shape[1]")
+        print(f"Saved Dataset -> {out_parq}\nSaved CSV.GZ -> {out_csv_gz}\nRows: {len(df)}, Cols: {df.shape[1]}")
     else: 
         out_csv = processed_path(f"games_wide_{args.year}_{args.season}.csv")
         save_csv(df, out_csv)

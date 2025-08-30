@@ -1,5 +1,9 @@
 setup.py
 src/who_covers/__init__.py
+src/who_covers/cfbd_client.py
+src/who_covers/flatten_advanced.py
+src/who_covers/flatten_basic.py
+src/who_covers/io.py
 src/who_covers.egg-info/PKG-INFO
 src/who_covers.egg-info/SOURCES.txt
 src/who_covers.egg-info/dependency_links.txt

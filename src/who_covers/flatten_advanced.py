@@ -21,6 +21,12 @@ def flatten_advanced_team_game_stats(records) -> pd.DataFrame:
         rows.append(row)
     df = pd.DataFrame(rows).drop_duplicates(subset=["game_id", "team"])
     for c in df.columns:
-        if c not in ("game_id", "team"):
-            df[c] = pd.to_numeric(df[c], errors="ignore")
+        if c in ("game_id", "team"):
+            continue
+        # Attempt to convert to numeric; if conversion fails, keep original values.
+        try:
+            df[c] = pd.to_numeric(df[c])
+        except Exception:
+            # Leave column as-is (non-numeric)
+            pass
     return df
