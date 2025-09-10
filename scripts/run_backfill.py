@@ -13,7 +13,10 @@ def sh(cmd):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--season", default="regular", choices=["regular","postseason","both"])
-    ap.add_argument("--with-lines", action="store_true")
+    # include betting lines by default; add --no-lines to disable
+    ap.add_argument('--with-lines', dest='with_lines', action='store_true', help='fetch and merge betting lines')
+    ap.add_argument('--no-lines', dest='with_lines', action='store_false', help='do not fetch or merge betting lines')
+    ap.set_defaults(with_lines=True)
     args = ap.parse_args()
 
     for yr in YEARS:

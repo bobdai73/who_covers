@@ -1,8 +1,7 @@
-Metadata-Version: 2.4
+Metadata-Version: 2.1
 Name: who_covers
 Version: 0.1.0
 Requires-Dist: pandas>=2.1
 Requires-Dist: pyarrow>=15.0
 Requires-Dist: cfbd>=4.6.8
 Requires-Dist: numpy>=1.26
-Dynamic: requires-dist

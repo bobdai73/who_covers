@@ -23,7 +23,22 @@ def main():
         games_ids = {g.id for g in games}
 
         recs = apis["stats"].get_advanced_game_stats(year=yr, season_type=args.season)
-        recs = [r for r in recs if getattr(r, 'id', None) in games_ids]
+
+        def _rec_game_id(r):
+            """Return a record's game id using common attribute names or nested objects."""
+            # common possible attribute names
+            for attr in ("game_id", "gameId", "id"):
+                v = getattr(r, attr, None)
+                if v is not None:
+                    return v
+            # try nested object
+            g = getattr(r, "game", None)
+            if g is not None:
+                return getattr(g, "id", None)
+            return None
+
+        # keep only records that match known game ids
+        recs = [r for r in recs if _rec_game_id(r) in games_ids]
         df = flatten_advanced_team_game_stats(recs)
 
         # Ensure at most one row per (game_id, team)
@@ -35,7 +50,10 @@ def main():
         if games_path.exists():
             games_df = pd.read_parquet(games_path)
             games_ids = set(games_df['game_id'].astype(int).unique())
-            df = df[df['game_id'].astype(int).isin(games_ids)]
+            if 'game_id' in df.columns:
+                df = df[df['game_id'].astype(int).isin(games_ids)]
+            else:
+                print(f"Advanced stats dataframe has no 'game_id' column; skipping game_id filter for {yr} {args.season}")
         else:
             print(f"Warning: games file not found at {games_path}; not filtering advanced output")
 

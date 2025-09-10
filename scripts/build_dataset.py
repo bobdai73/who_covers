@@ -21,6 +21,9 @@ def main():
     ap.add_argument("--year", type=int, required=True)
     ap.add_argument("--season", default="regular", choices=["regular","postseason","both"])
     ap.add_argument("--with-lines", action="store_true")
+    # optional: write a gzipped CSV alongside the parquet output
+    ap.add_argument("--csv-gz", dest="csv_gz", action="store_true",
+                    help="also save a gzipped CSV alongside the parquet output")
     args = ap.parse_args()
 
     games = pd.read_parquet(raw_path(f"games_{args.year}_{args.season}.parquet"))
@@ -62,16 +65,28 @@ def main():
             df[c] = pd.to_numeric(df[c], errors="ignore")
 
     df["point_diff"] = df["home_points"] - df["away_points"]
-    df["favorite"] = np.where(df.get("spread").notna(),
-                              np.where(df["spread"] < 0, "home", "away"),
-                              pd.NA)
+    # Safely compute favorite: guard if 'spread' column is missing or non-numeric
+    if "spread" in df.columns:
+        spread = df["spread"]
+        try:
+            spread = pd.to_numeric(spread)
+        except Exception:
+            # leave as-is; pd.to_numeric may fail if non-numeric values present
+            pass
+        # create favorite where spread is present
+        mask = spread.notna()
+        df["favorite"] = pd.NA
+        if mask.any():
+            df.loc[mask, "favorite"] = np.where(spread[mask] < 0, "home", "away")
+    else:
+        df["favorite"] = pd.NA
 
     out_parq = processed_path(f"games_wide_{args.year}_{args.season}.parquet")
     save_parquet(df, out_parq)
 
-    if args.csv.gz:
-        out_csv_gz = processed_path(f"games_wide_{args.year}_{args.season}")
-        df.to_csv(out_csv_gz, index =False, compression="gzip")
+    if args.csv_gz:
+        out_csv_gz = processed_path(f"games_wide_{args.year}_{args.season}.csv.gz")
+        df.to_csv(out_csv_gz, index=False, compression="gzip")
         print(f"Saved Dataset -> {out_parq}\nSaved CSV.GZ -> {out_csv_gz}\nRows: {len(df)}, Cols: {df.shape[1]}")
     else: 
         out_csv = processed_path(f"games_wide_{args.year}_{args.season}.csv")
